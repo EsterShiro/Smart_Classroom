@@ -2,13 +2,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const app = express();
-const port = 5000;
+const port = 5001;
 
 const cors = require('cors');
 
 app.use(cors());
 
-mongoose.connect('mongodb://localhost:27017/BME280', {
+mongoose.connect('mongodb://localhost:27017/CPE495', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

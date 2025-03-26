@@ -8,15 +8,8 @@ import MQ131Sensor from './components/MQ131Sensor';
 function App() {
   return (
     <div className="min-h-screen bg-gray-100 flex">
-      <div className="w-48 bg-gray-800 text-white p-6">
-        <h1 className="text-3xl font-bold mb-4">Menu</h1>
-        <ul>
-          <li className="mb-4"><a href="#" className="text-2xl hover:underline">Dashboard</a></li>
-          <li className="mb-4"><a href="#" className="text-2xl hover:underline">Setting</a></li>
-        </ul>
-      </div>
       <div className="flex-1 p-4">
-        <h1 className="text-5xl font-bold mb-8 text-center">Dashboard sensor</h1>
+        <h1 className="text-5xl font-bold mb-8 text-center text-black">Dashboard sensor</h1>
         <div className="flex flex-wrap justify-center gap-8">
           <BME280Sensor />
           <MQ7Sensor />
