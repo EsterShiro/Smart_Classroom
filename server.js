@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const app = express();
-const port = 5001;
+const port = 5002;
 
 const cors = require('cors');
 
@@ -56,11 +56,12 @@ const MQ7 = mongoose.model('MQ7', mq7Schema);
 
 app.get('/api/mq7', async (req, res) => {
   try {
-    const data = await MQ7.find().sort({ timestamp: 1 }).limit(8);
+    const data = await MQ7.find().sort({ timestamp: 1 });
     res.json(data);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+  
 });
 
 const mq135Schema = new mongoose.Schema({

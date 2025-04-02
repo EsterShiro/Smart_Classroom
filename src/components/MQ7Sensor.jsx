@@ -1,55 +1,55 @@
-import React from 'react';
-import { Line, Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend } from 'chart.js';
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
-
-const lineData = {
-  labels: ['15:41:30', '15:42:00', '15:42:30', '15:43:00', '15:43:30', '15:44:00', '15:44:30', '15:45:00'],
-  datasets: [
-    {
-      label: 'CO Level',
-      data: [1890, 1895, 1900, 1895, 1890, 1895, 1900, 1895],
-      borderColor: 'rgb(255, 99, 132)',
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-      fill: true,
-    },
-  ],
-};
-
-const barData = {
-  labels: ['15:41:30', '15:42:00', '15:42:30', '15:43:00', '15:43:30', '15:44:00', '15:44:30', '15:45:00'],
-  datasets: [
-    {
-      label: 'CO Level',
-      data: [1890, 1895, 1900, 1895, 1890, 1895, 1900, 1895],
-      backgroundColor: 'rgba(54, 162, 235, 0.5)',
-    },
-  ],
-};
-
-const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top',
-    },
-    title: {
-      display: true,
-      text: 'CO Level',
-    },
-  },
-};
+import React, { useEffect, useState } from 'react';
 
 function MQ7Sensor() {
+  const [coValue, setCoValue] = useState(null); // State สำหรับเก็บค่า CO ล่าสุด
+  const [timestamp, setTimestamp] = useState(null); // State สำหรับเก็บ timestamp ล่าสุด
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:5002/api/mq7");
+        const data = await response.json();
+        console.log("Data from API:", data); // Debugging
+
+        if (data && data.length > 0) {
+          const latestData = data[data.length - 1]; // ดึงข้อมูลล่าสุด
+          setCoValue(latestData.co);
+          setTimestamp(new Date(latestData.timestamp).toLocaleTimeString("th-TH", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          }));
+        } else {
+          console.error("No data received from API");
+          setCoValue(null);
+          setTimestamp(null);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setCoValue(null);
+        setTimestamp(null);
+      }
+    };
+
+    fetchData();
+    const intervalId = setInterval(fetchData, 60000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4">เซ็นเซอร์ MQ7</h2>
-      <div className="h-48">
-        <Line data={lineData} options={options} />
-      </div>
-      <div className="h-48 mt-4">
-        <Bar data={barData} options={options} />
+    <div className="font-kanit bg-white rounded-lg shadow-md" style={{ paddingTop: '10px', paddingLeft: '20px', paddingRight: '10px', marginBottom: '230px' }}>
+      <h2 className="text-xl text-green-20">MQ7 Sensor</h2>
+      <h2 className="text-xl font-bold text-black">ตรวจวัดก๊าซคาร์บอนมอนอกไซด์ (CO)</h2>
+      <div>
+        {coValue !== null ? (
+          <>
+            <p className="text-2xl font-bold text-indigo-600">{coValue} ppm</p>
+            <p className="text-sm text-gray-500">เวลา: {timestamp}</p>
+          </>
+        ) : (
+          <p className="text-gray-500">กำลังโหลดข้อมูล...</p>
+        )}
       </div>
     </div>
   );
